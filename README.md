@@ -10,6 +10,7 @@ This Memcached operator code coverage is an example on how to generate code cove
 - [docker][docker_tool] version 17.03+
 - [kubectl][kubectl_tool] v1.14.1+
 - [operator-sdk][operator_install]
+- [ginkgo][ginkgo]
 - Access to a Kubernetes v1.14.1+ cluster or use [KiND](https://kind.sigs.k8s.io/docs/user/quick-start/)
 
 ## Overview of the code profile for a Kubernetes Operator
@@ -17,7 +18,6 @@ This Memcached operator code coverage is an example on how to generate code cove
 [Runtime Code profile for Kubernetes Operators](CONCEPT_OVERVIEW.md)
 
 ## Quick Demo
-
 
 1. `go mod tidy`
 2. `export IMAGE=<your image name>` (ie: "quay.io/example-inc/memcached-operator-profile:v0.0.1")
@@ -42,16 +42,6 @@ $ go mod tidy
 
 <a name="build-operator"></a>
 
-### Building the operator
-
-Build the Memcached operator image and push it to a public registry, such as quay.io:
-
-```
-$ export IMAGE=quay.io/example-inc/memcached-operator:v0.0.1
-$ operator-sdk build $IMAGE
-$ docker push $IMAGE
-```
-
 ### Building the operator with profile
 
 Build the Memcached operator image and push it to a public registry, such as quay.io:
@@ -62,25 +52,9 @@ $ make build-profile
 $ docker push $IMAGE # Optional, only if you use Kube cluster instead of KiND.
 ```
 
-### Using the image
-
-```
-# Update the operator manifest to use the built image name (if you are performing these steps on OSX, see note below)
-$ sed -i 's|REPLACE_IMAGE|quay.io/example-inc/memcached-operator-profile:v0.0.1|g' deploy/operator.yaml
-# On OSX use:
-$ sed -i "" 's|REPLACE_IMAGE|quay.io/example-inc/memcached-operator-profile:v0.0.1|g' deploy/operator.yaml
-```
-
-**NOTE** The `quay.io/example-inc/memcached-operator-profile:v0.0.1` is an example. You should build and push the image for your repository.
-
 ### Deploy a KiND cluster
-```shell
-rm -rf /tmp/profile
-mkdir -p /tmp/profile
-kind create cluster --name memcache-operator-cluster --config=build/kind-config/kind-config.yaml
-kind export kubeconfig --name=memcache-operator-cluster
-kind load docker-image quay.io/example-inc/memcached-operator-profile:v0.0.1 --name=memcache-operator-cluster
-```
+
+Run `make create-cluster` to create a new KiND cluster and upload the image.
 
 ### Installing
 
@@ -123,8 +97,9 @@ kubectl logs deployment.apps/memcached-operator -n memcached
 
 ### Running Tests
 
-Run `make test-e2e` to run the integration e2e tests with different options. For
-more information see the [writing e2e tests][golang-e2e-tests] guide.
+Run `make test-e2e-profile` to run the e2e tests with different options.
+For details information on how to implement the profile, read [Concept Overview](CONCEPT_OVERVIEW.md)
+
 
 [dep_tool]: https://golang.github.io/dep/docs/installation.html
 [go_tool]: https://golang.org/dl/
@@ -133,3 +108,4 @@ more information see the [writing e2e tests][golang-e2e-tests] guide.
 [operator_sdk]: https://github.com/operator-framework/operator-sdk
 [operator_install]: https://sdk.operatorframework.io/docs/install-operator-sdk/
 [golang-e2e-tests]: https://sdk.operatorframework.io/docs/golang/e2e-tests/
+[ginkgo]: https://onsi.github.io/ginkgo/
