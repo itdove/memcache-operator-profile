@@ -11,13 +11,13 @@ This Memcached operator code coverage is an example on how to generate code cove
 - [kubectl][kubectl_tool] v1.14.1+
 - [operator-sdk][operator_install]
 - [ginkgo][ginkgo]
-- Access to a Kubernetes v1.14.1+ cluster or use [KiND](https://kind.sigs.k8s.io/docs/user/quick-start/)
+- [KiND v0.7.0+](https://kind.sigs.k8s.io/docs/user/quick-start/)
 
 ## Overview of the code profile for a Kubernetes Operator
 
 [Runtime Code profile for Kubernetes Operators](CONCEPT_OVERVIEW.md)
 
-## Quick Demo
+## Quick Demo using KiND
 
 1. `go mod tidy`
 2. `export IMAGE=<your image name>` (ie: "quay.io/example-inc/memcached-operator-profile:v0.0.1")
@@ -99,7 +99,6 @@ kubectl logs deployment.apps/memcached-operator -n memcached
 
 Run `make test-e2e-profile` to run the e2e tests with different options.
 For details information on how to implement the profile, read [Concept Overview](CONCEPT_OVERVIEW.md)
-
 
 [dep_tool]: https://golang.github.io/dep/docs/installation.html
 [go_tool]: https://golang.org/dl/
