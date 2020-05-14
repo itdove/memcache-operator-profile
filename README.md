@@ -27,7 +27,8 @@ This Memcached operator code coverage is an example on how to generate code cove
    2. `make install-profile` to install memcached instrumented operator
    3. `make uninstall-profile` to uninstall memcached instrumented operator.
    4. `make delete-cluster` to delete the KiND cluster.
-   5. `make generate-profile` to generate the profile htlm and get the profile percentage.
+   5. `make merge-profile` to merge all profiles.
+   6. `make generate-profile` to generate the profile htlm and get the profile percentage.
 
 ## Getting Started
 
