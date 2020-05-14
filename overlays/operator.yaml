@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: memcached-operator
+spec:
+  template:
+    spec:
+      securityContext:
+        fsGroup: 2000
+      containers:
+      - name: memcached-operator
+        command:
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - mountPath: /tmp/profile
+          name: profile-dir       
+      volumes:
+      - name: profile-dir
+        hostPath:
+          # directory location on host
+          path: /tmp/profile
+          # this field is optional
+          type: Directory
+    
