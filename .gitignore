@@ -64,7 +64,7 @@ anaconda-mode/
 *.test
 # Output of the go profile tool, specifically when used with LiteIDE
 *.out
-*.htlm
+*.html
 ./profile
 ### Vim ###
 # swap
