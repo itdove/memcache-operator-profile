@@ -46,8 +46,6 @@ You have to only add one file in your source code called `main_test.go` next to 
 
 [cmd/main_test.go](cmd/manager/main_test.go):
 ```
-// Copyright (c) 2020 Red Hat, Inc.
- 
 // +build testrunmain
  
 package main
