@@ -1,16 +1,12 @@
-# Runtime Code profile for Kubernetes Operators
+# Runtime Code Profile for Kubernetes Operators 
 
-## Abstract
+The technique described in this blog allows you to create instrumented operators and deploy them in a Kubernetes environment, then collect the code coverage based on end-to-end tests on a composition of operators, rather than on a single operator. For the simplicity of the example, we will apply this techniqie to only operators.
 
-The technic described in this document allows to create an instrumented operators and so deploy them in a kubernetes environment and collect the code coverage based on end-2-end tests on a composition of operators rather than on a single operator. For the simplicity of the example, we will apply this technic to only operator.
+Often, you are asked to have a code coverage above a given percentage, and you are struggling to write unit-tests. At the same time you are asked to create functional-tests and end-to-end tests, but you don’t have any coverage reports on these.
 
-## Introduction
+Unit-tests are important, but at the end of the day, we are creating operators, which provide functionalities tested by the implemented functional-tests. All these operators are packaged together to build a product on to which the end-user will play a number of scenarios emulated by the end-to-end tests. These make functional tests and end-to-end tests more critical.
 
-Often, you are asked to have a code coverage above a given percentage and you are struggling to write unit-tests. At the same time you are asked to create functional-tests and end-to-end tests but you don’t have any coverage reports on these.
-
-Unit-tests are important but at the end of the day, we are creating operators which provide functionalities tested by the implemented  functional-tests. All these operators are packaged together to build a product on which the end-user will play a number of scenarios emulated by the end-to-end tests. These make functional tests and end-to-end tests more criticals.
-
-We can easily generate test profile reports on unit-tests but not yet on functional-test and end-to-end tests as they are often disconnect from the operator, meaning the tests will send CRs to the operator and not call some of its methods and it is what is about in this presentation. Helping you to generate profile reports on functional-test and end-to-end tests and so increase the test code coverage percentage using the same technology. Here we will focus on the code coverage profile as other profiles such as cpu and mem are provided by the operator metrics functionality.
+We can easily generate test profile reports on unit-tests, but not yet on functional-test and end-to-end tests as they are often disconnected from the operator, meaning the tests will send CRs to the operator and not call some of its methods and it is what is about in this presentation. Helping you to generate profile reports on functional-test and end-to-end tests and so increase the test code coverage percentage using the same technology. Here we will focus on the code coverage profile as other profiles such as cpu and mem are provided by the operator metrics functionality.
 
 Tests coverage is not all as the tests themselves must check if each result of each test is accurate but it helps to focus the development of tests where it is most needed.
 
