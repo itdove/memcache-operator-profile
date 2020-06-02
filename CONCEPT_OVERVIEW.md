@@ -112,39 +112,41 @@ The `test.coverprofile` specifies the file where the profile output must be sent
 
 The [operator.yaml](deploy/operator.yaml) must be updated to customized to add the volume, securityContext... For that we will use the `kustomize` capability of `kubectl`.
 
-An [overlays/operator.yaml](overlays/operator.yaml) will be created, which will overlay the existing [deploy/operator.yaml](deploy/operator.yaml) by:
-- adding the `securityContext`
-- adding the `volumes` and `volumeMounts`
-- Emptying the `commands` to make sure the entrypoint will be used.
+An [overlays/operator.yaml](overlays/operator.yaml) will be created, which will overlay the existing [deploy/operator.yaml](deploy/operator.yaml) by taking the following actions:
 
-Two extra files will be added to make the customization working:
+ - Adding the `securityContext`
+ - Adding the `volumes` and `volumeMounts`
+ - Emptying the `commands` to make sure the entrypoint will be used.
+
+Two extra files are added to make the customization work:
+
 - [overlays/kustomize.yaml](overlays/kustomization.yaml)
 - [deploy/kustomize.yaml](deploy/kustomization.yaml)
   
-The deployment itself will be done using `kubectl apply -k overlays` instead of `kubectl apply -f deploy/operator.yaml`
+The deployment itself is run `kubectl apply -k overlays` instead of `kubectl apply -f deploy/operator.yaml`.
 
-In this example, we use [KiND](https://kind.sigs.k8s.io/docs/user/quick-start/) as cluster with this configuration file [build/kind-config/kind-config.yaml](build/kind-config/kind-config.yaml)
+In this example, we use [KiND](https://kind.sigs.k8s.io/docs/user/quick-start/) as cluster with this configuration file [build/kind-config/kind-config.yaml](build/kind-config/kind-config.yaml).
 
 #### 2.3 Run the operator
 
 Use the following targets to run the operator:
 
-- `make create-cluster` to create the KiND cluster.
-- `make install-profile` to install the memcached
+- Run `make create-cluster` to create the KiND cluster.
+- Run `make install-profile` to install the memcached.
 
 
 #### 2.4 Run your tests
 
-Once the operator is deployed you run your tests.
+Once the operator is deployed, you can run your tests.
 
 #### 2.5 Stop the operator and get profile
 
-In order to get the profile we must stop the pods, here we will remove the memcached but stopping the pod will have the same effect, generate the profile file.
+In order to get the profile, we must stop the pods. Here I will remove the memcached, but stopping the pod has the same effect. Generate the profile file.
 
-- `make uninstall-profile` to uninstall the memcached.
-- `make delete-cluster` to delete the cluster.
+- Run `make uninstall-profile` to uninstall the memcached.
+- Run `make delete-cluster` to delete the cluster.
 
-The profile file will be created in the `profile` directory.
+The profile file is created in the `profile` directory.
 
 ### 3 Analyze
 
