@@ -44,113 +44,116 @@ I divide the process into three main phases as listed:
 
 “Go test” also offers the possibility to generate instrumented code, which contains the functionality to accumulate the code profile data during the execution and at the end generates the code profile report. 
 
-#### 1. Add the main test method
+1. Add the main test method
 
-You have to only add one file in your source code named, `main_test.go`, next to your current `main.go`. See [cmd/main_test.go](cmd/manager/main_test.go):
+ You have to only add one file in your source code named, `main_test.go`, next to your current `main.go`. See [cmd/main_test.go](cmd/manager/main_test.go):
 
-```
-// +build testrunmain
- 
-package main
- 
-import (
-   "testing"
-)
- 
-func TestRunMain(t *testing.T) {
-   main()
-}
-```
+ ```
+ // +build testrunmain
 
-#### 2. Build the instrumented binary
+ package main
 
-Usually the operator binary is build using `operator-sdk build $IMAGE`, as seen in [README.md](README.md#buildoperator). Here, I build the binary with the `go test` and so create a new [Dockerfile-profile](build/Dockerfile-profile), where the standard command is replaced. See the following example:
+ import (
+    "testing"
+ )
 
-First command to be replaced:
+ func TestRunMain(t *testing.T) {
+    main()
+ }
+ ```
 
-```
-COPY build/_output/bin/memcached-operator ${OPERATOR}`
-```
-Replacement command:
+2. Build the instrumented binary
 
-```
-go test -covermode=atomic -coverpkg-github.com/open-cluster-management/endpoint-operator/pkg/... -c -tags testrunmain ./cmd/manager -o build/_output/manager
-```
-See the following list of definitions from the command:
+ Usually the operator binary is build using `operator-sdk build $IMAGE`, as seen in [README.md](README.md#buildoperator). Here, I build the binary with the `go test` and so create a new [Dockerfile-profile](build/Dockerfile-profile), where the standard command is replaced. See the following example:
 
- - The `coverpkg` parameter lists the packages for which the profile report must be done.
+ First command to be replaced:
 
- - The `-c` requests the `go test` to create a binary instead of running the test.
+ ```
+ COPY build/_output/bin/memcached-operator ${OPERATOR}`
+ ```
+ Replacement command:
 
- - The `-tags` mentions the packages that must be built for that operator.
+ ```
+ go test -covermode=atomic -coverpkg-github.com/open-cluster-management/endpoint-operator/pkg/... -c -tags testrunmain ./cmd/manager -o build/_output/manager
+ ```
+ See the following list of definitions from the command:
 
- - The `-o` requests to generate a binary called `manager` as by default the generated binary name is the concatenation of the package name and `.test`.
+  - The `coverpkg` parameter lists the packages for which the profile report must be done.
 
- - The $IMAGE will be set with an extension `-profile` to avoid overwriting the production image.
+  - The `-c` requests the `go test` to create a binary instead of running the test.
+
+  - The `-tags` mentions the packages that must be built for that operator.
+
+  - The `-o` requests to generate a binary called `manager` as by default the generated binary name is the concatenation of the package name and `.test`.
+
+  - The $IMAGE will be set with an extension `-profile` to avoid overwriting the production image.
 
 ### Deploy and run the operator
 
-#### 1. Set the Entrypoint in the new Docker file
+1. Set the Entrypoint in the new Docker file
 
-Usually the [entrypoint](build/bin/entrypoint) resembles the following command:
+ Usually the [entrypoint](build/bin/entrypoint) resembles the following command:
 
-``` 
-exec ${OPERATOR} $@
-```
-A new [entrypoint-profile](build/bin/entrypoint-profile) is created with the following command:
+ ``` 
+ exec ${OPERATOR} $@
+ ```
+ A new [entrypoint-profile](build/bin/entrypoint-profile) is created with the following command:
 
-```
-exec ${OPERATOR} -test.run “^TestRunMain$” -test.coverprofile=/tmp/profile/$HOSTNAME=`date +%s%N`.out $@
-```
+ ```
+ exec ${OPERATOR} -test.run “^TestRunMain$” -test.coverprofile=/tmp/profile/$HOSTNAME=`date +%s%N`.out $@
+ ```
 
-Tip: You can add more profiles such as CPU, memory, and block. Run `go help test` to see the parameters. Also check [pprof](https://github.com/google/pprof) to learn more about the available reports for these profiles.
+ Tip: You can add more profiles such as CPU, memory, and block. Run `go help test` to see the parameters. Also check [pprof](https://github.com/google/pprof) to learn more about the available reports for these profiles.
 
-The `test.run` specifies the test that needs to run and here “^TestRunMain$”.
+ The `test.run` specifies the test that needs to run and here “^TestRunMain$”.
 
-The `test.coverprofile` specifies the file where the profile output must be sent. The file name is built with the time in milliseconds to make it unique and so make sure we generate a new file at each pod restart.
+ The `test.coverprofile` specifies the file where the profile output must be sent. The file name is built with the time in milliseconds to make it unique and so make sure we generate a new file at each pod restart.
 
-#### 2. Adapt the deployment YAML file
+2. Adapt the deployment YAML file
 
-The [operator.yaml](deploy/operator.yaml) must be customized to add the volume, securityContext, etc... For this step, I will use the `kustomize` capability of `kubectl`.
+ The [operator.yaml](deploy/operator.yaml) must be customized to add the volume, securityContext, etc... For this step, I will use the `kustomize` capability of `kubectl`.
 
-An [overlays/operator.yaml](overlays/operator.yaml) will be created to overwrite the existing [deploy/operator.yaml](deploy/operator.yaml) by taking the following actions:
+ An [overlays/operator.yaml](overlays/operator.yaml) will be created to overwrite the existing [deploy/operator.yaml](deploy/operator.yaml) by taking the following actions:
 
- - Adding the `securityContext`
- - Adding the `volumes` and `volumeMounts`
- - Emptying the `commands` to make sure the entrypoint will be used
+  - Adding the `securityContext`
+  - Adding the `volumes` and `volumeMounts`
+  - Emptying the `commands` to make sure the entrypoint will be used
 
-You must add two files for customization work. Add and name the following files, `overlays` and `deploy`:
+ You must add two files for customization work. Add and name the following files, `overlays` and `deploy`:
 
-- [overlays/kustomize.yaml](overlays/kustomization.yaml)
-- [deploy/kustomize.yaml](deploy/kustomization.yaml)
-  
-The deployment itself is run `kubectl apply -k overlays` instead of `kubectl apply -f deploy/operator.yaml`.
+ - [overlays/kustomize.yaml](overlays/kustomization.yaml)
+ - [deploy/kustomize.yaml](deploy/kustomization.yaml)
 
-In this example, we use [kind](https://kind.sigs.k8s.io/docs/user/quick-start/) as cluster with this configuration file [build/kind-config/kind-config.yaml](build/kind-config/kind-config.yaml).
+ **Important:** The deployment itself is run by using `kubectl apply -k overlays` instead of the usual `kubectl apply -f deploy/operator.yaml` command.
 
-#### 3. Run the operator
+ In this example, we use [kind](https://kind.sigs.k8s.io/docs/user/quick-start/) as cluster with this configuration file [build/kind-config/kind-config.yaml](build/kind-config/kind-config.yaml).
 
-Use the following targets to run the operator:
+3. Run the operator
 
-- Run `make create-cluster` to create the kind cluster.
-- Run `make install-profile` to install the memcached.
+ Use the following targets to run the operator:
 
+ - Run `make create-cluster` to create the kind cluster.
+ - Run `make install-profile` to install the memcached.
 
-#### 4. Run your tests
+4. Run your tests
 
-Once the operator is deployed, you can run your tests.
+ Once the operator is deployed, you can run your test with the following command, which will run `ginkgo` tests:
 
-#### 5. Stop the operator and get profile
+ ```
+ test-e2e-profile
+ ```
 
-In order to get the profile, we must stop the pods. Here, I will remove the memcached, but stopping the pod has the same effect. Generate the profile file.
+5. Stop the operator and get profile
 
-- Run `make uninstall-profile` to uninstall the memcached.
-- Run `make delete-cluster` to delete the cluster.
+ In order to get the profile, we must stop the pods. Here, I will remove the memcached, but stopping the pod has the same effect. Generate the profile file.
 
-The profile file is created in the `profile` directory.
+ - Run `make uninstall-profile` to uninstall the memcached.
+ - Run `make delete-cluster` to delete the cluster.
+
+ The profile file is created in the `profile` directory.
 
 ### Analyze your profile
 
-The standard `go tools` can be used to generate the html or extract the profile percentage.
+ The standard `go tools` can be used to generate the `html` or extract the profile percentage.
 
-Run `make generate-profile` to analyze your profile.
+ Run `make generate-profile` to analyze your profile.
