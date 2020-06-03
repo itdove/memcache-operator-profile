@@ -153,4 +153,4 @@ The profile file is created in the `profile` directory.
 
 The standard `go tools` can be used to generate the html or extract the profile percentage.
 
-You can run `make generate-profile` for that.
+Run `make generate-profile` to analyze your profile.
