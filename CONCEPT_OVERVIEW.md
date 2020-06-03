@@ -4,17 +4,17 @@ The technique described in this blog allows you to create instrumented operators
 
 ## Why use operators for code coverage?
 
-Unit-tests are important, but at the end of the day, we are creating operators, which require _functional_-tests. All these operators are packaged together to build a product onto which the end-user will play a number of scenarios emulated by the end-to-end tests. These make functional tests and end-to-end tests more critical.
+Unit tests are important, but at the end of the day, we are creating operators, which require _functional_ tests. All these operators are packaged together to build a product onto which the end-user tests multiple scenarios that are emulated by the end-to-end tests. These make _functional_ tests and _end-to-end_ tests more critical.
 
-Often, you are asked to have a code coverage above a given percentage, and you are struggling to write unit-tests. At the same time you are asked to create functional-tests and end-to-end tests, but you don’t have any coverage reports on these.
+Often, you are asked to have a code coverage above a given percentage, and you are struggling to write unit-tests. At the same time you are asked to create functional tests and end-to-end tests, but you don’t have any coverage reports on these tests.
 
-We can easily generate test profile reports on unit-tests, but not yet on functional-test and end-to-end tests as they are often disconnected from the operator, meaning the tests will send CRs to the operator and not call some of its methods and it is what is about in this presentation. Helping you to generate profile reports on functional-test and end-to-end tests and so increase the test code coverage percentage using the same technology. 
+We can easily generate test profile reports on unit-tests, but not yet on functional test and end-to-end tests, as they are often disconnected from the operator, which means the tests will send CRs to the operator and not call some of its methods and it is what is about in this presentation. Helping you to generate profile reports on functional tests and end-to-end tests to increase the test code coverage percentage using the same technology. 
 
 Here, we will focus on the code coverage profile as other profiles such as CPU and memory are provided by the operator metrics functionality.
 
-Tests coverage is not all as the tests themselves must check if each result of each test is accurate but it helps to focus the development of tests where it is most needed.
+Tests coverage is not all as the tests themselves must check if each result of each test is accurate, but it helps to focus the development of tests where it is most needed.
 
-As you can see, the [Operator-sdk](https://sdk.operatorframework.io/docs/golang/e2e-tests) already has some capabilities, but only to run the operator locally with tests implemented in the same project. In this sample, will also use [Ginkgo](https://onsi.github.io/ginkgo/) to implement our end-to-end tests, which will have no dependencies on the operator.
+As you can see, the [Operator-sdk](https://sdk.operatorframework.io/docs/golang/e2e-tests) already has some capabilities, but only to run the operator locally with tests implemented in the same project. In this sample, I will also use [Ginkgo](https://onsi.github.io/ginkgo/) to implement our end-to-end tests, which will have no dependencies on the operator.
 
 ## Implementation Constraints and Challenges
 
