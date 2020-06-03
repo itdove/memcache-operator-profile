@@ -109,47 +109,47 @@ The `test.run` specifies the test that needs to run and here “^TestRunMain$”
 
 The `test.coverprofile` specifies the file where the profile output must be sent. The file name is built with the time in milliseconds to make it unique and so make sure we generate a new file at each pod restart.
 
-#### 2.2 Deployment
+#### 2. Adapt the deployment YAML file
 
-The [operator.yaml](deploy/operator.yaml) must be updated to customized to add the volume, securityContext... For that we will use the `kustomize` capability of `kubectl`.
+The [operator.yaml](deploy/operator.yaml) must be customized to add the volume, securityContext, etc... For this step, I will use the `kustomize` capability of `kubectl`.
 
-An [overlays/operator.yaml](overlays/operator.yaml) will be created, which will overlay the existing [deploy/operator.yaml](deploy/operator.yaml) by taking the following actions:
+An [overlays/operator.yaml](overlays/operator.yaml) will be created to overwrite the existing [deploy/operator.yaml](deploy/operator.yaml) by taking the following actions:
 
  - Adding the `securityContext`
  - Adding the `volumes` and `volumeMounts`
- - Emptying the `commands` to make sure the entrypoint will be used.
+ - Emptying the `commands` to make sure the entrypoint will be used
 
-Two extra files are added to make the customization work:
+You must add two files for customization work. Add and name the following files, `overlays` and `deploy`:
 
 - [overlays/kustomize.yaml](overlays/kustomization.yaml)
 - [deploy/kustomize.yaml](deploy/kustomization.yaml)
   
 The deployment itself is run `kubectl apply -k overlays` instead of `kubectl apply -f deploy/operator.yaml`.
 
-In this example, we use [KiND](https://kind.sigs.k8s.io/docs/user/quick-start/) as cluster with this configuration file [build/kind-config/kind-config.yaml](build/kind-config/kind-config.yaml).
+In this example, we use [kind](https://kind.sigs.k8s.io/docs/user/quick-start/) as cluster with this configuration file [build/kind-config/kind-config.yaml](build/kind-config/kind-config.yaml).
 
-#### 2.3 Run the operator
+#### 3. Run the operator
 
 Use the following targets to run the operator:
 
-- Run `make create-cluster` to create the KiND cluster.
+- Run `make create-cluster` to create the kind cluster.
 - Run `make install-profile` to install the memcached.
 
 
-#### 2.4 Run your tests
+#### 4. Run your tests
 
 Once the operator is deployed, you can run your tests.
 
-#### 2.5 Stop the operator and get profile
+#### 5. Stop the operator and get profile
 
-In order to get the profile, we must stop the pods. Here I will remove the memcached, but stopping the pod has the same effect. Generate the profile file.
+In order to get the profile, we must stop the pods. Here, I will remove the memcached, but stopping the pod has the same effect. Generate the profile file.
 
 - Run `make uninstall-profile` to uninstall the memcached.
 - Run `make delete-cluster` to delete the cluster.
 
 The profile file is created in the `profile` directory.
 
-### 3 Analyze
+### Analyze your profile
 
 The standard `go tools` can be used to generate the html or extract the profile percentage.
 
