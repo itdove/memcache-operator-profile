@@ -26,7 +26,7 @@ This technique does not come without possible constraints, as I outline in the f
 
 3. The report is generated in the container. A volume is used to store the file.
 
-Note: We can not use `kubectl cp` because the pod fails by the time the `kubectl cp` runs, also some images, like `ubi-minimal`, do not have `tar` installed, so `kubectl cp` cannnot be used. If you use kind, then you must provide a configuration file to map a volume in kind, with the host platform.
+Note: We can not use `kubectl cp` because the pod is terminated by the time the `kubectl cp` runs, also some images, like `ubi-minimal`, do not have `tar` installed, so `kubectl cp` cannnot be used. If you use the Kubernetes tool, _kind_, then you must provide a configuration file to map a volume in kind, with the host platform. See [Kind tool](https://kubernetes.io/docs/setup/learning-environment/kind/).
 
 4. The operator is embedded in an image. Modify the dockerfile and entrypoint in order to instrument and run the operator with “Go test”.
 
@@ -34,16 +34,17 @@ Note: We can not use `kubectl cp` because the pod fails by the time the `kubectl
 
 I divide the process into three main phases as listed:
 
-1. Instrument and package the operator
-2. Deploy and run the operator
-3. Analyze profile
+1. First, instrument and package the operator.
+2. Second, deploy and run the operator.
+3. Third, analyze profile
 
-### 1. Instrument and package the operator 
+### Instrument and package the operator 
 
 “Go test” offers a way to generate code profile reports based on defined tests and often so-called unit-test, but it can do more. In fact, it generates profile reports on all code visited during the test and we can launch a “go test” on the main() function.
 
 “Go test” also offers the possibility to generate instrumented code, which contains the functionality to accumulate the code profile data during the execution and at the end generates the code profile report. 
-#### 1.1 Add the main test method
+
+#### 1. Add the main test method
 
 You have to only add one file in your source code named, `main_test.go`, next to your current `main.go`. See [cmd/main_test.go](cmd/manager/main_test.go):
 
@@ -61,7 +62,7 @@ func TestRunMain(t *testing.T) {
 }
 ```
 
-#### 1.2 Build the instrumented binary
+#### 2. Build the instrumented binary
 
 Usually the operator binary is build using `operator-sdk build $IMAGE`, as seen in [README.md](README.md#buildoperator). Here, I build the binary with the `go test` and so create a new [Dockerfile-profile](build/Dockerfile-profile), where the standard command is replaced. See the following example:
 
@@ -87,9 +88,9 @@ See the following list of definitions from the command:
 
  - The $IMAGE will be set with an extension `-profile` to avoid overwriting the production image.
 
-### 2. Deploy and run the operator
+### Deploy and run the operator
 
-#### 2.1 Entrypoint
+#### 1. Set the Entrypoint in the new Docker file
 
 Usually the [entrypoint](build/bin/entrypoint) resembles the following command:
 
