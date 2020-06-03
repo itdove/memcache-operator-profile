@@ -6,7 +6,7 @@ The technique described in this blog allows you to create instrumented operators
 
 Often, you are asked to have a code coverage above a given percentage, and you are struggling to write unit-tests. At the same time you are asked to create functional-tests and end-to-end tests, but you don’t have any coverage reports on these.
 
-Unit-tests are important, but at the end of the day, we are creating operators, which provide functionalities tested by the implemented functional-tests. All these operators are packaged together to build a product on to which the end-user will play a number of scenarios emulated by the end-to-end tests. These make functional tests and end-to-end tests more critical.
+Unit-tests are important, but at the end of the day, we are creating operators, which require _functional_-tests. All these operators are packaged together to build a product onto which the end-user will play a number of scenarios emulated by the end-to-end tests. These make functional tests and end-to-end tests more critical.
 
 We can easily generate test profile reports on unit-tests, but not yet on functional-test and end-to-end tests as they are often disconnected from the operator, meaning the tests will send CRs to the operator and not call some of its methods and it is what is about in this presentation. Helping you to generate profile reports on functional-test and end-to-end tests and so increase the test code coverage percentage using the same technology. 
 
