@@ -16,7 +16,7 @@ Tests coverage is not all as the tests themselves must check if each result of e
 
 As you can see, the [Operator-sdk](https://sdk.operatorframework.io/docs/golang/e2e-tests) already has some capabilities, but only to run the operator locally with tests implemented in the same project. In this sample, will also use [Ginkgo](https://onsi.github.io/ginkgo/) to implement our end-to-end tests, which will have no dependencies on the operator.
 
-### Implementation Constraints and Challenges
+## Implementation Constraints and Challenges
 
 This technique does not come without possible constraints, as I outline in the following list:
 
@@ -32,11 +32,11 @@ Note: We can not use `kubectl cp` because the pod is terminated by the time the 
 
 ## How to implement the operator
 
-I divide the process into three main phases as listed:
+I divide the process into three main tasks, as listed:
 
 1. First, instrument and package the operator.
 2. Second, deploy and run the operator.
-3. Third, analyze profile
+3. Third, analyze your profile.
 
 ### Instrument and package the operator 
 
