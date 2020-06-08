@@ -1,6 +1,6 @@
 # Runtime Code Profile for Kubernetes Operators 
 
-The technique described in this blog allows you to create instrumented operators and deploy them in a Kubernetes environment.  You can then collect the code coverage based on end-to-end tests on a composition of operators, rather than on a single operator. For the simplicity of the example, I will apply this technique to only operators.
+The technique described in this blog allows you to create instrumented operators and deploy them in a Kubernetes environment.  You can then collect the code coverage based on end-to-end tests on a composition of operators, rather than on a single operator. For the simplicity of the example, I will apply this technique to only one operator.
 
 ## Why use operators for code coverage?
 
@@ -165,10 +165,8 @@ Coverage files are  available in the profile directory:
 
 **Note:** The `make demo` command runs successively the following makefile targets: `delete-cluster`, `create-cluster`, `install-profile`, `test-e2e-profile`, `uninstall-profile`, `delete-cluster`, `merge-profile`, `generate-profile`.
 
- The standard `go tools` can be used to generate the `html` or extract the profile percentage.
+ The standard `go tools` can be used to generate the `html` or extract the profile percentage. Run `make generate-profile` to analyze your profile.
+ 
+ References:
  
  See [Go coverage with external tests](https://blog.cloudflare.com/go-coverage-with-external-tests/).
- 
- 
-
- Run `make generate-profile` to analyze your profile.
